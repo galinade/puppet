@@ -1,5 +1,5 @@
 const puppeteer = require('puppeteer');
-const { clickElement } = require("./lib/commands.js");
+const { clickElement, getText } = require("./lib/commands.js");
 
 let page;
 
@@ -18,44 +18,62 @@ describe("Сinema ticket booking tests", () => {
     await page.goto("http://qamid.tmweb.ru");
   });
 
+ const places = beforeEach(async () => {[
+  {"row": 3,"chair": 2},
+    {"row": 2,"chair": 2},
+    {"row": 3,"chair": 3}
+ ]});
+  
+
 
   test("Booking one ticket test ", async () => {
     await clickElement(
-      page,
-      "body > nav > a.page-nav__day.page-nav__day_chosen"
+      page, "nav > a:nth-child(5)"
     );
     await clickElement(
-      page,
-      "body > main > section:nth-child(1) > div:nth-child(4) > ul > li > a"
-    );
+      page, "main > section:nth-child(1) a");
+    
     await clickElement(
-      page,
-      "body > main > section > div.buying-scheme > div.buying-scheme__wrapper > div:nth-child(4) > span:nth-child(9)");
-    await clickElement(page, "body > main > section > button");
-    const actual = await getText(page, "body > main > section > header > h2");
-    expect(actual).toContain("ВЫ ВЫБРАЛИ БИЛЕТЫ:");
+        page, ".buying-scheme__wrapper > div:nth-child(4) > span:nth-child(9)");
+    await clickElement(page, "main > section > button");
+    const actual = await getText(page, "main > section > header > h2");
+    expect(actual).toContain("Вы выбрали билеты:");
   });
 
   test("Booking multiple tickets test ", async () => {
 
     await clickElement(
       page,
-      "body > nav > a.page-nav__day.page-nav__day_chosen > span.page-nav__day-number"
+      "nav > a:nth-child(6)"
     );
     await clickElement(
       page,
-      "body > main > section:nth-child(2) > div:nth-child(2) > ul > li > a"
+      " main > section:nth-child(2) > div:nth-child(2) a"
     );
     await clickElement(
       page,
-      "body > main > section > div.buying-scheme > div.buying-scheme__wrapper > div:nth-child(8) > span.buying-scheme__chair.buying-scheme__chair_standart.buying-scheme__chair_selected"
+      ".buying-scheme__wrapper > div:nth-child(8) > span:nth-child(1)"
     );
     await clickElement(
       page,  
-      "body > main > section > div.buying-scheme > div.buying-scheme__wrapper > div:nth-child(4) > span:nth-child(2)"
+      ".buying-scheme__wrapper > div:nth-child(4) > span:nth-child(2)"
       );
-    await clickElement(page, "body > main > section > button");
-  const actual = await getText(page, "body > main > section > header > h2");
-  expect(actual).toContain("ВЫ ВЫБРАЛИ БИЛЕТЫ:");
+    await clickElement(page, "main > section > button");
+  const actual = await getText(page, "main > section > header > h2");
+  expect(actual).toContain("Вы выбрали билеты:");
+  });
+
+  test("Seat reservation test ", async () => {
+  await clickElement(
+    page, "nav > a:nth-child(5)"
+  );
+  await clickElement(
+    page, "main > section:nth-child(1) a");
+  
+  await clickElement(
+      page, ".buying-scheme__wrapper > div:nth-child(1) > span:nth-child(2)");
+  await clickElement(page, "main > section > button");
+  const actual = await getText(page, "h1");
+  expect(actual).toContain("Идёмвкино");
   });
 });
