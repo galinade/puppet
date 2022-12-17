@@ -18,14 +18,12 @@ describe("Сinema ticket booking tests", () => {
     await page.goto("http://qamid.tmweb.ru");
   });
 
- const places = beforeEach(async () => {[
-  {"row": 3,"chair": 2},
+ const places = [
+    {"row": 3,"chair": 2},
     {"row": 2,"chair": 2},
     {"row": 3,"chair": 3}
- ]});
+ ];
   
-
-
   test("Booking one ticket test ", async () => {
     await clickElement(
       page, "nav > a:nth-child(5)"
@@ -41,7 +39,7 @@ describe("Сinema ticket booking tests", () => {
   });
 
   test("Booking multiple tickets test ", async () => {
-
+   
     await clickElement(
       page,
       "nav > a:nth-child(6)"
@@ -50,29 +48,27 @@ describe("Сinema ticket booking tests", () => {
       page,
       " main > section:nth-child(2) > div:nth-child(2) a"
     );
+    for (place of places) {
     await clickElement(
       page,
-      ".buying-scheme__wrapper > div:nth-child(8) > span:nth-child(1)"
+      `.buying-scheme__wrapper > div:nth-child(${place.row}) > span:nth-child(${place.chair})`
     );
-    await clickElement(
-      page,  
-      ".buying-scheme__wrapper > div:nth-child(4) > span:nth-child(2)"
-      );
+    }
     await clickElement(page, "main > section > button");
   const actual = await getText(page, "main > section > header > h2");
   expect(actual).toContain("Вы выбрали билеты:");
   });
 
   test("Seat reservation test ", async () => {
-  await clickElement(
+    await clickElement(
     page, "nav > a:nth-child(5)"
-  );
-  await clickElement(
+    );
+    await clickElement(
     page, "main > section:nth-child(1) a");
   
-  await clickElement(
-      page, ".buying-scheme__wrapper > div:nth-child(1) > span:nth-child(2)");
-  await clickElement(page, "main > section > button");
+    await clickElement(
+    page, ".buying-scheme__wrapper > div:nth-child(1) > span:nth-child(2)");
+    await clickElement(page, "main > section > button");
   const actual = await getText(page, "h1");
   expect(actual).toContain("Идёмвкино");
   });
